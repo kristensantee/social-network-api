@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose');
 
 // Schema-only subdocument in Thought model
-const reactionSchema = new mongoose.Schema(
+const reactionSchema = new Schema(
     {
         reactionId: [{ type: Schema.Types.ObjectId, ref: 'thought'}],
         reactionBody: {type: String, required: true, maxlength: 280},
@@ -10,7 +10,7 @@ const reactionSchema = new mongoose.Schema(
     }
 )
 // Schema for Thought Model using array of nested reactionSchema
-const thoughtSchema = new mongoose.Schema(
+const thoughtSchema = new Schema(
     {
         thoughtText: {type: String, required: true, minlength: 1, maxlength: 280},
         createdAt: {type: Date, default: Date.now},

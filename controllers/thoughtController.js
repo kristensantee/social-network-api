@@ -1,4 +1,4 @@
-const { Thought } = require('../models');
+const Thought = require('../models/Thought');
 
 module.exports = {
     getThoughts(req, res) {
@@ -9,9 +9,9 @@ module.exports = {
     getSingleThought(req, res) {
         Thought.findOne({ _id: req.params.thoughtId })
             .then((thought) =>
-            !thought
-                ? res.status(404).json({ msg: 'No thought with that ID' })
-                : res.json(thought)
+                !thought
+                    ? res.status(404).json({ msg: 'No thought with that ID' })
+                    : res.json(thought)
             )
             .catch((err) => res.status(500).json(err));
     },
@@ -20,12 +20,38 @@ module.exports = {
             .then((dbThoughtData) => res.json(dbThoughtData))
             .catch((err) => res.status(500).json(err))
     },
-    // Folder 14 has example
-    // updateThought(req, res) {
-    //     Thought.findOneAndUpdate(
-    //         // Find first instance of this value
-    //         { thoughtId: '' },
-    //         // Replace with new value
-    //     )
-    // }
+    updateThought(req, res) {
+        Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $set: req.body },
+            { runValidators: true, new: true }
+        )
+            .then((thought) => 
+                !thought
+                    ? res.status(404).json({ msg: 'No course with this ID!' })
+                    : res.json(thought)
+            )
+        .catch((err) => res.status(500).json(err))
+    },
+    deleteThought(req, res) {
+        Thought.findOneAndDelete({ _id: req.params.thoughtId })
+            .then((thought) =>
+                !thought
+                    ? res.status(404).json({ msg: 'No thought with that ID' }) 
+                    : User.findOneAndUpdate(
+                        { thoughts: req.params.thoughtId },
+                        { $pull: { thoughts: req.params.thoughtId }},
+                        { new: true }
+                    )
+            )
+            .then((thought) =>
+                !thought
+                    ? res.status(404).json({ msg: 'Thought deleted but no user found' })
+                    : res.json({ msg: 'Thought successfully deleted' })
+            )
+            .catch((err) => {
+                console.log(err);
+                res.status(500).json(err)
+            })
+    }
 };
