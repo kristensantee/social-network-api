@@ -73,8 +73,6 @@ module.exports = {
             { $addToSet: { reaction: req.body }},
             { runValidators: true, new: true }
         )
-        .select('-__v')
-        .populate('thoughts')
         .then((thought) =>
             !thought
                 ? res.status(404).json({ msg: 'No thought with this ID'})

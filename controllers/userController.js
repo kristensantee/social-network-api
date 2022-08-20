@@ -21,7 +21,7 @@ module.exports = {
     },
     createUser(req, res) {
         User.create(req.body)
-            .then((dbUserData) => res.json(dbUserData))
+            .then((user) => res.json(user))
             .catch((err) => res.status(500).json(err));
     },
     updateUser(req, res) {
@@ -42,11 +42,12 @@ module.exports = {
             .then((user) =>
                 !user
                     ? res.status(404).json({ msg: 'No user with that ID' })
-                    : User.findOneAndUpdate(
-                        { users: req.params.userId },
-                        { $pull: { users: req.params.userId }},
-                        { new: true }
-                    )
+                    : Thought.deleteMany({ _id: { $in: user.thoughts }})
+            )
+            .then((user) =>
+                !user
+                    ? res.status(404).json({ msg: 'User not deleted' })
+                    : res.json({ msg: 'User successfully deleted' })
             )
             .catch((err) => {
                 console.log(err);

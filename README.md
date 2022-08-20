@@ -18,7 +18,7 @@ This API stores all users, their friends in the social media app, their posted t
 6. [Questions](#questions)
 
 ## Installation
-A link to the deployed site can be found [here](GOOGLE DRIVE LINK). A screenshot of the site is shown below: 
+A link to the deployed site can be found [here](https://drive.google.com/file/d/1NltFqIrLZGvu03KGOmWRQdQQiKbwJh1S/view). A screenshot of the site is shown below: 
 ![screenshot of deployed site for Social Media API](./Screenshot.png)
 
 ## Usage
