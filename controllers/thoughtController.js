@@ -1,4 +1,4 @@
-const Thought = require('../models/Thought');
+const { Thought,User } = require('../models');
 
 module.exports = {
     getThoughts(req, res) {
@@ -17,8 +17,21 @@ module.exports = {
     },
     createThought(req, res) {
         Thought.create(req.body)
-            .then((dbThoughtData) => res.json(dbThoughtData))
-            .catch((err) => res.status(500).json(err))
+            .then((thought) => {
+            return User.findOneAndUpdate(
+                { _id: req.body.userId },
+                { $addToSet: { thoughts: thought._id }},
+                { new: true }
+            );
+        })
+        .then((user) =>
+            !user
+                ? res.status(404).json({
+                    msg: 'Thought created, but found no user with that ID'
+                })
+                : res.json('Thought created!')
+        )
+        .catch((err) => res.status(500).json(err))
     },
     updateThought(req, res) {
         Thought.findOneAndUpdate(
@@ -53,5 +66,33 @@ module.exports = {
                 console.log(err);
                 res.status(500).json(err)
             })
+    },
+    addReaction(req, res) {
+        Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $addToSet: { reactions: req.body }},
+            { runValidators: true, new: true }
+        )
+        .select('-__v')
+        .populate('thoughts')
+        .then((thought) =>
+            !thought
+                ? res.status(404).json({ msg: 'No thought with this ID'})
+                : res.json(thought)
+        )
+        .catch((err) => res.status(500).json(err));
+    },
+    deleteReaction(req, res) {
+        Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $pull: { reactions: {reactionId: req.params.reactionId}}},
+            { runValidators: true, new: true }
+        )
+        .then((thought) =>
+            !thought
+                ? res.status(404).json({ msg: 'No reaction with this ID' })
+                : res.json(thought)
+        )
+        .catch((err) => res.status(500).json(err))
     }
 };

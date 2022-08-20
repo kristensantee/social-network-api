@@ -3,11 +3,15 @@ const User = require('../models/User');
 module.exports = {
     getUsers(req, res) {
         User.find()
+            .select('-__v')
+            .populate('thoughts')
             .then((users) => res.json(users))
             .catch((err) => res.status(500).json(err));
     },
     getSingleUser(req, res) {
         User.findOne({ _id: req.params.userId })
+            .select('-__v')
+            .populate('thoughts')
             .then((user) =>
                 !user
                     ? res.status(404).json({ msg: 'No user with that ID' })

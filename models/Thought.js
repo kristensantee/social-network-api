@@ -3,10 +3,10 @@ const { Schema, model } = require('mongoose');
 // Schema-only subdocument in Thought model
 const reactionSchema = new Schema(
     {
-        reactionId: [{ type: Schema.Types.ObjectId, ref: 'thought'}],
+        reactionId: [{ type: Schema.Types.ObjectId, ref: 'thoughts'}],
         reactionBody: {type: String, required: true, maxlength: 280},
         username: {type: String, required: true},
-        createdAt: {type: Date, default: Date.now}
+        createdAt: {type: Date, default: new Date}
     }
 )
 // Schema for Thought Model using array of nested reactionSchema
@@ -30,6 +30,6 @@ thoughtSchema.virtual('reactionCount').get(function () {
     return this.reactions.length;
 });
 
-const Thought = model('thought', thoughtSchema);
+const Thought = model('thoughts', thoughtSchema);
 
 module.exports = Thought;
